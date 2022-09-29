@@ -1,1 +1,7 @@
 build
+
+*.class
+*.jar
+*.war
+*.log
+*.log.zip
