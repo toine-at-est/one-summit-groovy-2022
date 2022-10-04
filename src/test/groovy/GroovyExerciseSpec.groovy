@@ -42,36 +42,37 @@ class GroovyExerciseSpec extends Specification{
             //add code here
     }
 
-    /*
-    Exercise 4:
-    Complete the following test using Groovy closures
-     */
-    def 'Using Groovy closures'(){
-        given: 'list of employees'
-            def listOfEmployees = [new Employee(name:"employee1",age:18),
-                                                new Employee(name:"employee2",age:45)]
-        and: ''
-            def checkEmployeeUnder25 = {Employee employee -> return employee.age < 25}
-        when: 'all employees are checked'
-            def allEmployeesAreUnder25 = listOfEmployees.every(checkEmployeeUnder25)
-        then: 'result is as expected'
-            assert allEmployeesAreUnder25 == false
-    }
+//    /*
+//    Exercise 4:
+//    Complete the following test using Groovy closures
+//     */
+//    def 'Using Groovy closures'(){
+//        given: 'list of employees'
+//            def listOfEmployees = [new Employee(name:"employee1",age:18),
+//                                                new Employee(name:"employee2",age:45)]
+//        and: ''
+//            def checkEmployeeUnder25 = //add code here
+//        when: 'all employees are checked'
+//            def allEmployeesAreUnder25 = listOfEmployees.every(checkEmployeeUnder25)
+//        then: 'result is as expected'
+//            assert allEmployeesAreUnder25 == false
+//    }
 
     /*
     Exercise 5:
     Complete the following test to satisfy the 'then' label
      */
     def 'Using Mocks'(){
-        given: 'an employee with account'
-            Employee employee = new Employee()
+        given: 'a mock payroll service with a salary of'
             //add code here
-        and: ''
+        and: 'an employee using that mock PayrollService'
+            def employee = new Employee()
             //add code here
         when: 'send salary method is called'
             employee.sendSalary()
         then: 'the method to record payment is called once'
-            1 * account.recordPayment(4000)
+        //make below more strict
+            1 * mockPayrollService.recordPayment(*_)
     }
 
     /*
@@ -98,20 +99,20 @@ class GroovyExerciseSpec extends Specification{
     }
 
     class Employee {
-        Account account
+        PayrollService payroll
         String name
         int age
 
         int getBasicSalary(){
-            return account.getBasicSalary()
+            return payroll.getBasicSalary()
         }
 
         void sendSalary(){
-            account.recordPayment(basicSalary)
+            payroll.recordPayment(basicSalary)
         }
     }
 
-    interface Account {
+    interface PayrollService {
         void recordPayment(int amount)
         int getBasicSalary()
     }

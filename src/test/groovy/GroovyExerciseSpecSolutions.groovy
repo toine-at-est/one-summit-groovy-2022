@@ -41,11 +41,11 @@ class GroovyExerciseSpecSolutions extends Specification{
      */
     def 'Using Groovy maps'(){
         given: 'a map of employees and their roles'
-            def employeeRoles = ["employee1":"Supervisor","employee2":"Trainee"]
+            def employeeRoles = ["employee1":"supervisor","employee2":"trainee"]
         when: 'element is replaced'
-            //add code here
+            employeeRoles["employee2"] = "manager"
         then: ''
-            //add code here
+            assert employeeRoles["employee2"] == "manager"
     }
 
     /*
@@ -57,8 +57,7 @@ class GroovyExerciseSpecSolutions extends Specification{
             def listOfEmployees = [new Employee(name:"employee1",age:18),
                                    new Employee(name:"employee2",age:45)]
         and: 'a closure to check for employees age'
-            //replace null with code
-            def checkEmployeeUnder25 = null
+            def checkEmployeeUnder25 = {Employee employee -> return employee.age < 25}
         when: 'all employees are checked'
             def allEmployeesAreUnder25 = listOfEmployees.every(checkEmployeeUnder25)
         then: 'result is as expected'
@@ -69,22 +68,37 @@ class GroovyExerciseSpecSolutions extends Specification{
     Exercise 5:
     Complete the following tests to satisfy the 'then' label of the following test
      */
-    def 'Using Mocks'(){
-        given: 'an employee with account'
-            Employee employee = new Employee()
-            def account = Mock(Account)
-            employee.account = account
-        and: ''
-            account.getBasicSalary() >> 4000
+    def 'Solution A: Using Mocks'(){
+        given: 'a mock payroll service with a salary of'
+            def mockPayrollService = Mock(PayrollService)
+            mockPayrollService.getBasicSalary() >> 4000
+        and: 'an employee using that mock PayrollService'
+            def employee = new Employee()
+            employee.payroll = mockPayrollService
         when: 'send salary method is called'
             employee.sendSalary()
         then: 'the method to record payment is called once'
-            1 * account.recordPayment(4000)
+            1 * mockPayrollService.recordPayment(4000)
     }
+
+    def 'Solution B: Using Mocks'(){
+        given: 'a mock payroll service with a salary of'
+            def mockPayrollService = Mock(PayrollService)
+            1 * mockPayrollService.getBasicSalary() >> 4000
+        and: 'an employee using that mock PayrollService'
+            def employee = new Employee()
+            employee.payroll = mockPayrollService
+        when: 'send salary method is called'
+            employee.sendSalary()
+        then: 'the method to record payment is called once'
+            1 * mockPayrollService.recordPayment(4000)
+    }
+
+
 
     /*
     Exercise 6:
-    Complete the test with 3 scenarios wherein a and b
+    Complete the test with 3 scenarios wherein a and b are added
     hint: use of data pipes or list with '<<'
      */
     def 'Testing with multiple scenarios'() {
@@ -108,20 +122,20 @@ class GroovyExerciseSpecSolutions extends Specification{
     }
 
     class Employee {
-        Account account
+        PayrollService payroll
         String name
         int age
 
         int getBasicSalary(){
-            return account.getBasicSalary()
+            return payroll.getBasicSalary()
         }
 
         void sendSalary(){
-            account.recordPayment(basicSalary)
+            payroll.recordPayment(basicSalary)
         }
     }
 
-    interface Account {
+    interface PayrollService {
         void recordPayment(int amount)
         int getBasicSalary()
     }
